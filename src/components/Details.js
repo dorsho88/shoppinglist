@@ -8,9 +8,6 @@ const Details = (props) => {
         })
     );
 
-
-
-
     let i = item[0];
 
     return (
