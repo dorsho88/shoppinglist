@@ -1,15 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import EditButton from '@material-ui/icons/Edit';
-import ForwardButton from '@material-ui/icons/Forward';
-import { blockStatement } from '@babel/types';
+import Item from "./ListItem";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -17,62 +9,51 @@ const useStyles = makeStyles(theme => ({
         maxWidth: 360,
         backgroundColor: theme.palette.background.paper,
     },
-    showOnHover: {
-
-        "&:hover": {
-            anotherClass: {
-                display: 'none'
-            }
-
-        }
+    quantityInput: {
+        width: '30px;',
+        display: 'inline-block'
     }
 }));
 
-export default function CheckboxList() {
+const defaultItems = [
+    { id: 1, name: 'Lego', description: 'A game', quantity: 1, checked: false },
+    { id: 2, name: 'Football', description: 'A Sport', quantity: 6, checked: false },
+    { id: 3, name: 'Batman', description: 'Action figure', quantity: 2, checked: false },
+];
+
+const CheckboxList = (props) => {
+
     const classes = useStyles();
-    const [checked, setChecked] = React.useState([0]);
-
-    const handleToggle = value => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
-    };
+    const [items, setItems] = React.useState(
+        JSON.parse(localStorage.getItem('items')) || defaultItems
+    );
+    const handleChange = (id, property, newValue) => {
+        let newItems = items.map(item => {
+            if (item.id === id) {
+                item[property] = newValue
+            }
+            return item
+        })
+        setItems(newItems)
+        localStorage.setItem('items', JSON.stringify(items));
+    }
 
     return (
         <List className={classes.root}>
-            {[0, 1, 2, 3].map(value => {
-                const labelId = `checkbox-list-label-${value}`;
-
+            {items.map(item => {
+                const labelId = `checkbox-list-label-${item}`;
                 return (
-                    <ListItem key={value} role={undefined} dense button onClick={handleToggle(value)}>
-                        <ListItemIcon>
-                            <Checkbox
-                                edge="start"
-                                checked={checked.indexOf(value) !== -1}
-                                tabIndex={-1}
-                                disableRipple
-                                inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </ListItemIcon>
-                        <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="Comments" >
-                                <EditButton />
-                            </IconButton>
-                            <IconButton edge="end" aria-label="Comments" >
-                                <ForwardButton />
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>
+                    <Item key={item.id}
+                        item={item}
+                        onChange={handleChange}
+                        role={undefined}
+                        dense
+                        button />
                 );
             })}
+
         </List>
     );
 }
+
+export default CheckboxList;
