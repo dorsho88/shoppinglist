@@ -1,6 +1,6 @@
 import React from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import EditButton from '@material-ui/icons/Edit';
+import DeleteButton from '@material-ui/icons/Delete';
 import ForwardButton from '@material-ui/icons/Forward';
 import TextField from '@material-ui/core/TextField';
 import { Link } from "react-router-dom";
@@ -15,13 +16,9 @@ import { Link } from "react-router-dom";
 
 const Item = (props) => {
 
-    const { item, onChange } = props;
+    const { item, onChange, onDelete } = props;
     const [editMode, setEditMode] = React.useState(false);
     const [isChecked, setIsChecked] = React.useState(!!item.checked);
-    // // work on each item.properties individualy?
-    // const [name, setName] = React.useState(item.name || 'item');
-    // const [quantity, setQuantity] = React.useState(item.quantity || 1);
-    // // or use item object like so? this seems way better
 
     const handleChecked = () => event => {
         setIsChecked(!isChecked);
@@ -30,6 +27,10 @@ const Item = (props) => {
 
     const handleSave = (property) => event => {
         onChange(item.id, property, event.target.value)
+    };
+
+    const handleDelete = () => event => {
+        onDelete(item.id)
     };
 
     return (
@@ -42,7 +43,7 @@ const Item = (props) => {
                     tabIndex={-1}
                     disableRipple
                     inputProps={{ 'aria-labelledby': item.id }}
-                    onChange={handleChecked('checked')}
+                    onChange={handleChecked()}
                 />
             </ListItemIcon>
             {
@@ -55,10 +56,22 @@ const Item = (props) => {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{ maxLength: "99" }}
                             autoFocus={true}
                             margin="normal"
                             onChange={handleSave('name')}
+                            required
 
+                        />
+                        <TextField
+                            id="description"
+                            value={item.description}
+                            type="textarea"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            margin="normal"
+                            onChange={handleSave('description')}
                         />
                         <TextField
                             id="number"
@@ -80,14 +93,17 @@ const Item = (props) => {
                     />
             }
             <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="Comments" onClick={() => setEditMode(!editMode)}>
+                <IconButton edge="end" aria-label="Edit" onClick={() => setEditMode(!editMode)}>
                     <EditButton />
                 </IconButton>
-                <Link to={"/details/" + (item.id)}>
-                    <IconButton edge="end" aria-label="Comments" >
+                <Link to={{ pathname: "/details/" + (item.id), customProps: { details: item, onChange: handleChecked } }}>
+                    <IconButton edge="end" aria-label="Details" >
                         <ForwardButton />
                     </IconButton>
                 </Link>
+                <IconButton edge="end" aria-label="Delete" onClick={handleDelete()}>
+                    <DeleteButton />
+                </IconButton>
             </ListItemSecondaryAction>
 
         </ListItem>
