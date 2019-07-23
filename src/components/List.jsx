@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Item from "./ListItem";
+import { ItemsContext } from '../contexts/ItemsContext';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -18,16 +19,8 @@ const useStyles = makeStyles(theme => ({
 
 const CheckboxList = (props) => {
 
-    const { items, onChange, onDelete } = props;
+    const { items } = React.useContext(ItemsContext);
     const classes = useStyles();
-
-    const handleChange = (itemId, property, value) => {
-        onChange(itemId, property, value)
-    };
-
-    const handleDelete = (id) => {
-        onDelete(id)
-    };
 
     return (
         <div>
@@ -36,8 +29,10 @@ const CheckboxList = (props) => {
                     return (
                         <Item key={item.id}
                             item={item}
+                            /*
                             onChange={handleChange}
                             onDelete={handleDelete}
+                            */
                             role={undefined}
                             dense
                             button />
