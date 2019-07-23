@@ -1,4 +1,4 @@
-## This shopping list was made with React using Hooks and Context.
+## This shopping list was made from scratch with React using Hooks and Context.
 
 
 ## Installation
